@@ -1,2 +1,23 @@
--- USING POSTGRESQL
+CREATE TABLE products (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    product_name VARCHAR(67) UNIQUE NOT NULL
+);
 
+CREATE TABLE ingredients (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    ingredient_name VARCHAR(67) UNIQUE NOT NULL
+);
+
+CREATE TABLE recipes (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+
+    product_id INTEGER NOT NULL,
+    ingredient_id INTEGER NOT NULL,
+
+    quantity INTEGER NOT NULL CHECK (quantity > 0),
+
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT,
+    FOREIGN KEY (ingredient_id) REFERENCES ingredients(id) ON DELETE RESTRICT,
+
+    UNIQUE (product_id, ingredient_id)
+);
