@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Tsukimi_Rounded } from "next/font/google";
+import { Tsukimi_Rounded, Roboto_Mono } from "next/font/google";
 import "./globals.css";
+import Footer from "@/components/footer";
 
-const roboto = Tsukimi_Rounded({
+const tsukimi = Tsukimi_Rounded({
   subsets: ["latin"],
   weight: ["700"],
 });
@@ -18,8 +19,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${roboto.className} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en" className={`${tsukimi.className} h-full antialiased`}>
+      <body className={`min-h-full flex flex-col`}>
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }
