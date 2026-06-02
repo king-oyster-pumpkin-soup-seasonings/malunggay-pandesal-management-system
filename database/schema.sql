@@ -21,3 +21,15 @@ CREATE TABLE recipes (
 
     UNIQUE (product_id, ingredient_id)
 );
+
+CREATE TABLE production (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    
+    product_id INTEGER NOT NULL,
+
+    quantity INTEGER NOT NULL CHECK (quantity > 0),
+
+    produced_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT
+);
