@@ -1,3 +1,4 @@
 {
-  "js/ts.tsdk.path": "node_modules/typescript/lib"
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
+  "gitlens.ai.generateCommitMessage.customInstructions": "use conventional commit standard. carefully analyze the files first."
 }
