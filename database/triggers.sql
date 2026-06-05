@@ -12,3 +12,5 @@ CREATE TRIGGER production_insert_trigger
 AFTER INSERT ON production
 FOR EACH ROW
 EXECUTE FUNCTION log_production();
+
+

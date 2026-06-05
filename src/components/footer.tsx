@@ -8,12 +8,12 @@ const robotoMono = Roboto_Mono({
 export default function Footer() {
   return (
     <footer
-      className={`${robotoMono.className} bg-white text-gray-400/67 py-3 mt-auto text-sm
+      className={`${robotoMono.className} bg-white text-gray-400 py-3 mt-auto text-sm
       `}>
       <div className="container mx-auto text-center">
         <p>
-          &copy; {new Date().getFullYear()} Malunggay Pandesal System. All
-          rights reserved.
+          &copy; {new Date().getFullYear()} Malunggay Pandesal Management
+          System. All rights reserved.
         </p>
       </div>
     </footer>
