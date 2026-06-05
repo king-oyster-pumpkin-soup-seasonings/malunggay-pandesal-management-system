@@ -23,6 +23,9 @@ export default function Home() {
           height={400}
           className="self-center"
         />
+        <p className="self-center mt-4 text-xl font-semibold text-gray-500 tracking-wide text-center">
+          <i>palit namo! sanaol! papap dol! ayaw kol! bata pako kol!</i>
+        </p>
       </main>
     </div>
   );

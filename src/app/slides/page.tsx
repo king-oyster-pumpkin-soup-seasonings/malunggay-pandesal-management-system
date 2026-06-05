@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 
 import { Bowlby_One } from "next/font/google";
@@ -9,6 +9,8 @@ const bowlbyOne = Bowlby_One({
   subsets: ["latin"],
   weight: "400",
 });
+
+const SLIDE_INDEX_STORAGE_KEY = "slides-current-index";
 
 const slides = [
   {
@@ -39,8 +41,25 @@ const slides = [
 ];
 
 export default function SlidesPage() {
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(() => {
+    if (typeof window === "undefined") {
+      return 0;
+    }
+    const savedIndex = window.localStorage.getItem(SLIDE_INDEX_STORAGE_KEY);
+    if (savedIndex === null) {
+      return 0;
+    }
+    const parsedIndex = Number(savedIndex);
+    if (Number.isNaN(parsedIndex)) {
+      return 0;
+    }
+    return Math.max(0, Math.min(parsedIndex, slides.length - 1));
+  });
   const currentSlide = slides[index];
+
+  useEffect(() => {
+    window.localStorage.setItem(SLIDE_INDEX_STORAGE_KEY, String(index));
+  }, [index]);
 
   function nextSlide() {
     setIndex((prev) => (prev + 1) % slides.length);

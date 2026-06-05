@@ -1,3 +1,9 @@
+DROP TABLE IF EXISTS production_logs CASCADE;
+DROP TABLE IF EXISTS production CASCADE;
+DROP TABLE IF EXISTS recipes CASCADE;
+DROP TABLE IF EXISTS ingredients CASCADE;
+DROP TABLE IF EXISTS products CASCADE;
+
 CREATE TABLE products (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     product_name VARCHAR(67) UNIQUE NOT NULL
@@ -15,7 +21,7 @@ CREATE TABLE recipes (
     ingredient_id INTEGER NOT NULL,
     quantity INTEGER NOT NULL CHECK (quantity > 0),
 
-    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
     FOREIGN KEY (ingredient_id) REFERENCES ingredients(id) ON DELETE RESTRICT,
 
     UNIQUE (product_id, ingredient_id)
