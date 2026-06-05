@@ -13,7 +13,6 @@ CREATE TABLE recipes (
 
     product_id INTEGER NOT NULL,
     ingredient_id INTEGER NOT NULL,
-
     quantity INTEGER NOT NULL CHECK (quantity > 0),
 
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT,
@@ -26,10 +25,17 @@ CREATE TABLE production (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     
     product_id INTEGER NOT NULL,
-
     quantity INTEGER NOT NULL CHECK (quantity > 0),
-
     produced_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT
+);
+
+
+CREATE TABLE production_logs (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+
+    product_id INTEGER NOT NULL,
+    quantity INTEGER NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
