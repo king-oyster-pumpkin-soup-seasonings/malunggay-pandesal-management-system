@@ -150,13 +150,13 @@ export default function RecipesPage() {
 
     const json = await res.json();
 
-    if (json.success) {
+    if (res.ok && json.success) {
       await fetchRecipe(selectedProduct.id);
       setIsModalOpen(false);
       setEditingRecipe(null);
       setFormData({ ingredient_id: "", quantity: "" });
     } else {
-      alert("Unable to save recipe.");
+      alert(json.message ?? "Unable to save recipe.");
     }
   }
 
@@ -169,13 +169,13 @@ export default function RecipesPage() {
 
     const json = await res.json();
 
-    if (json.success) {
+    if (res.ok && json.success) {
       if (selectedProduct) {
         await fetchRecipe(selectedProduct.id);
       }
       setDeleteConfirm(null);
     } else {
-      alert("Unable to delete recipe.");
+      alert(json.message ?? "Unable to delete recipe.");
     }
   }
 

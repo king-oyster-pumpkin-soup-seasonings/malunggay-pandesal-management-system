@@ -21,11 +21,6 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true);
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
 
-  // Fetch products on mount
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
   async function fetchProducts() {
     try {
       const res = await fetch("/api/products");
@@ -39,6 +34,13 @@ export default function ProductsPage() {
       setLoading(false);
     }
   }
+
+  // Fetch products on mount
+  useEffect(() => {
+    queueMicrotask(() => {
+      void fetchProducts();
+    });
+  }, []);
 
   function openCreateModal() {
     setEditingId(null);
@@ -76,11 +78,13 @@ export default function ProductsPage() {
           }),
         });
         const data = await res.json();
-        if (data.success) {
+        if (res.ok && data.success) {
           setProducts(
             products.map((p) => (p.id === editingId ? data.data : p)),
           );
           closeModal();
+        } else {
+          alert(data.message ?? "Error saving product");
         }
       } else {
         // Create
@@ -90,9 +94,11 @@ export default function ProductsPage() {
           body: JSON.stringify({ product_name: formData.product_name }),
         });
         const data = await res.json();
-        if (data.success) {
+        if (res.ok && data.success) {
           setProducts([...products, data.data]);
           closeModal();
+        } else {
+          alert(data.message ?? "Error saving product");
         }
       }
     } catch (error) {
@@ -177,12 +183,12 @@ export default function ProductsPage() {
                         </div>
                       : <div className="flex gap-2 justify-center">
                           <button
-                            onClick={() => openEditModal(r)}
+                            onClick={() => openEditModal(product)}
                             className="px-3 py-1 bg-blue-50 text-blue-400 text-sm hover:bg-blue-200">
                             ✏️ Edit
                           </button>
                           <button
-                            onClick={() => setDeleteConfirm(r.id)}
+                            onClick={() => setDeleteConfirm(product.id)}
                             className="px-3 py-1 bg-red-100 text-red-400 text-sm hover:bg-red-200">
                             ❌ Delete
                           </button>

@@ -111,9 +111,11 @@ export default function ProductionPage() {
         });
 
         const data = await res.json();
-        if (data.success) {
+        if (res.ok && data.success) {
           await fetchAllData();
           closeModal();
+        } else {
+          alert(data.message ?? "Error saving production record");
         }
       } else {
         const res = await fetch("/api/production", {
@@ -123,9 +125,11 @@ export default function ProductionPage() {
         });
 
         const data = await res.json();
-        if (data.success) {
+        if (res.ok && data.success) {
           await fetchAllData();
           closeModal();
+        } else {
+          alert(data.message ?? "Error saving production record");
         }
       }
     } catch (error) {
@@ -223,12 +227,12 @@ export default function ProductionPage() {
                         </div>
                       : <div className="flex gap-2 justify-center">
                           <button
-                            onClick={() => openEditModal(r)}
+                            onClick={() => openEditModal(production)}
                             className="px-3 py-1 bg-blue-50 text-blue-400 text-sm hover:bg-blue-200">
                             ✏️ Edit
                           </button>
                           <button
-                            onClick={() => setDeleteConfirm(r.id)}
+                            onClick={() => setDeleteConfirm(production.id)}
                             className="px-3 py-1 bg-red-100 text-red-400 text-sm hover:bg-red-200">
                             ❌ Delete
                           </button>

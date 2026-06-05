@@ -21,11 +21,6 @@ export default function IngredientsPage() {
   const [loading, setLoading] = useState(true);
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
 
-  // Fetch ingredients on mount
-  useEffect(() => {
-    fetchIngredients();
-  }, []);
-
   async function fetchIngredients() {
     try {
       const res = await fetch("/api/ingredients");
@@ -39,6 +34,13 @@ export default function IngredientsPage() {
       setLoading(false);
     }
   }
+
+  // Fetch ingredients on mount
+  useEffect(() => {
+    queueMicrotask(() => {
+      void fetchIngredients();
+    });
+  }, []);
 
   function openCreateModal() {
     setEditingId(null);
@@ -76,11 +78,13 @@ export default function IngredientsPage() {
           }),
         });
         const data = await res.json();
-        if (data.success) {
+        if (res.ok && data.success) {
           setIngredients(
             ingredients.map((i) => (i.id === editingId ? data.data : i)),
           );
           closeModal();
+        } else {
+          alert(data.message ?? "Error saving ingredient");
         }
       } else {
         // Create
@@ -90,9 +94,11 @@ export default function IngredientsPage() {
           body: JSON.stringify({ ingredient_name: formData.ingredient_name }),
         });
         const data = await res.json();
-        if (data.success) {
+        if (res.ok && data.success) {
           setIngredients([...ingredients, data.data]);
           closeModal();
+        } else {
+          alert(data.message ?? "Error saving ingredient");
         }
       }
     } catch (error) {
@@ -161,12 +167,12 @@ export default function IngredientsPage() {
                   </div>
                 : <div className="flex gap-2">
                     <button
-                      onClick={() => openEditModal(r)}
+                      onClick={() => openEditModal(ingredient)}
                       className="px-3 py-1 bg-blue-50 text-blue-400 text-sm hover:bg-blue-200">
                       ✏️ Edit
                     </button>
                     <button
-                      onClick={() => setDeleteConfirm(r.id)}
+                      onClick={() => setDeleteConfirm(ingredient.id)}
                       className="px-3 py-1 bg-red-100 text-red-400  text-sm hover:bg-red-200">
                       ❌ Delete
                     </button>

@@ -1,16 +1,49 @@
 import { pool } from "@/library/database/pool";
 
-export async function POST(request: Request) {
-  const body = await request.json();
-  const { ingredient_name } = body;
-  const result = await pool.query(
-    "INSERT INTO ingredients (ingredient_name) VALUES ($1) RETURNING *",
-    [ingredient_name],
+function isUniqueViolation(error: unknown) {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    (error as { code?: string }).code === "23505"
   );
-  return Response.json({
-    success: true,
-    data: result.rows[0],
-  });
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const ingredientName = String(body.ingredient_name ?? "").trim();
+
+    if (!ingredientName) {
+      return Response.json(
+        { success: false, message: "Ingredient name cannot be empty." },
+        { status: 400 },
+      );
+    }
+
+    const result = await pool.query(
+      "INSERT INTO ingredients (ingredient_name) VALUES ($1) RETURNING *",
+      [ingredientName],
+    );
+
+    return Response.json({
+      success: true,
+      data: result.rows[0],
+    });
+  } catch (error) {
+    if (isUniqueViolation(error)) {
+      return Response.json(
+        { success: false, message: "This ingredient already exists." },
+        { status: 409 },
+      );
+    }
+
+    console.error("Error creating ingredient:", error);
+    return Response.json(
+      { success: false, message: "Unable to create ingredient." },
+      { status: 500 },
+    );
+  }
 }
 
 export async function GET() {
@@ -22,16 +55,41 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
-  const body = await request.json();
-  const { id, ingredient_name } = body;
-  const result = await pool.query(
-    "UPDATE ingredients SET ingredient_name = $1 WHERE id = $2 RETURNING *",
-    [ingredient_name, id],
-  );
-  return Response.json({
-    success: true,
-    data: result.rows[0],
-  });
+  try {
+    const body = await request.json();
+    const { id } = body;
+    const ingredientName = String(body.ingredient_name ?? "").trim();
+
+    if (!ingredientName) {
+      return Response.json(
+        { success: false, message: "Ingredient name cannot be empty." },
+        { status: 400 },
+      );
+    }
+
+    const result = await pool.query(
+      "UPDATE ingredients SET ingredient_name = $1 WHERE id = $2 RETURNING *",
+      [ingredientName, id],
+    );
+
+    return Response.json({
+      success: true,
+      data: result.rows[0],
+    });
+  } catch (error) {
+    if (isUniqueViolation(error)) {
+      return Response.json(
+        { success: false, message: "This ingredient already exists." },
+        { status: 409 },
+      );
+    }
+
+    console.error("Error updating ingredient:", error);
+    return Response.json(
+      { success: false, message: "Unable to update ingredient." },
+      { status: 500 },
+    );
+  }
 }
 
 export async function DELETE(request: Request) {
