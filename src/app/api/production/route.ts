@@ -1,10 +1,7 @@
-// How many pandesals can I produce with current ingredients?
-// A record that a product was produced in a certain quantity
-
 import { pool } from "@/library/database/pool";
 
 export async function GET() {
-  const result = await pool.query("SELECT * FROM production ORDER BY id ASC");
+  const result = await pool.query("SELECT * FROM production ORDER BY id DESC");
   return Response.json({
     success: true,
     data: result.rows,
