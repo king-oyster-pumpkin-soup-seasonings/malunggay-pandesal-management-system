@@ -22,7 +22,7 @@ CREATE TABLE recipes (
     quantity INTEGER NOT NULL CHECK (quantity > 0),
 
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
-    FOREIGN KEY (ingredient_id) REFERENCES ingredients(id) ON DELETE RESTRICT,
+    FOREIGN KEY (ingredient_id) REFERENCES ingredients(id) ON DELETE CASCADE,
 
     UNIQUE (product_id, ingredient_id)
 );
@@ -34,7 +34,7 @@ CREATE TABLE production (
     quantity INTEGER NOT NULL CHECK (quantity > 0),
     produced_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
 

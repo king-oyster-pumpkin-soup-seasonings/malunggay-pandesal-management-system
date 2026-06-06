@@ -93,14 +93,37 @@ export async function PUT(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  const body = await request.json();
-  const { id } = body;
-  const result = await pool.query(
-    "DELETE FROM ingredients WHERE id = $1 RETURNING *",
-    [id],
-  );
-  return Response.json({
-    success: true,
-    data: result.rows[0],
-  });
+  try {
+    const body = await request.json();
+    const { id } = body;
+
+    const result = await pool.query(
+      "DELETE FROM ingredients WHERE id = $1 RETURNING *",
+      [id],
+    );
+    return Response.json({ success: true, data: result.rows[0] });
+  } catch (error) {
+    // Foreign key violation: cannot delete ingredient used in recipes
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      (error as { code?: string }).code === "23503"
+    ) {
+      return Response.json(
+        {
+          success: false,
+          message:
+            "Cannot delete ingredient: it is used by one or more recipes. Remove recipe items first.",
+        },
+        { status: 409 },
+      );
+    }
+
+    console.error("Error deleting ingredient:", error);
+    return Response.json(
+      { success: false, message: "Unable to delete ingredient." },
+      { status: 500 },
+    );
+  }
 }
