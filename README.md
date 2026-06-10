@@ -137,7 +137,7 @@ Start the production server:
 pnpm start
 ```
 
-Run linting:
+Run linting (*):
 
 ```bash
 pnpm lint
